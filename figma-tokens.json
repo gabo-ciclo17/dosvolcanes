@@ -1,0 +1,13 @@
+{
+  "general/primary": "#eaf070",
+  "general/primary-foreground": "#351e28",
+  "general/secondary": "#ff5c35",
+  "general/background": "#351e28",
+  "general/foreground": "#e1ddd1",
+  "general/muted-foreground": "#a3999e",
+  "general/border": "rgba(225, 221, 209, 0.2)",
+  "font definitions/font-family-body": "Albert Sans, system-ui, -apple-system, sans-serif",
+  "rounded-lg": "20"
+}
+
+

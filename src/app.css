@@ -1,0 +1,4 @@
+/* SvelteKit shell — baseline de la fábrica + identidad del cliente.
+   El archivo del cliente va al final para que sus overrides ganen. */
+@import url('../utils/app.css');
+@import url('../cliente/tokens.css');

@@ -1,0 +1,144 @@
+/* ═══════════════════════════════════════════════════════════
+   CLIENTE — Identidad Visual (Override Layer)
+   ═══════════════════════════════════════════════════════════
+   Este es EL archivo de marca del cliente. El baseline de la
+   fábrica (utils/tokens.css) es 100% escala de grises; aquí
+   sobreescribes SOLO los tokens semánticos que la marca define.
+
+   Reglas:
+   - No dupliques primitivas ni redefinas la escala completa:
+     sobreescribe únicamente lo que la marca cambia.
+   - Fuentes self-hosted (woff2 subset en cliente/assets/fonts/),
+     NUNCA vía CDN (governance/GREEN_CODING.md).
+   - Sincronización Figma: bun run tokens:sync escribe el bloque
+     delimitado más abajo. No edites dentro del bloque.
+
+   Ejemplo de override manual:
+   :root {
+       --color-primary: #2a8f6e;
+       --color-primary-hover: #237a5d;
+       --color-primary-foreground: #ffffff;
+       --font-headline: 'Space Grotesk', var(--font-body);
+   }
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── FIGMA SYNC START (autogenerado — no editar este bloque) ── */
+:root {
+	--color-primary: #eaf070;
+	--color-primary-foreground: #351e28;
+	--color-secondary: #ff5c35;
+	--color-neutral-bg: #351e28;
+	--color-text-primary: #e1ddd1;
+	--color-text-muted: #a3999e;
+	--color-border-light: rgba(225, 221, 209, 0.2);
+	--font-body: Albert Sans, system-ui, -apple-system, sans-serif;
+	--radius-md: 20px;
+}
+/* ── FIGMA SYNC END ── */
+
+/* ── Tipografía Self-Hosted: Denton Text Cond Test ── */
+@font-face {
+	font-family: 'Denton Text Cond Test';
+	src: url('./assets/fonts/DentonCondensedTest-Light.otf') format('opentype');
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Denton Text Cond Test';
+	src: url('./assets/fonts/DentonCondensedTest-Regular.otf') format('opentype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Denton Text Cond Test';
+	src: url('./assets/fonts/DentonCondensedTest-Medium.otf') format('opentype');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Denton Text Cond Test';
+	src: url('./assets/fonts/DentonCondensedTest-Bold.otf') format('opentype');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Denton Text Cond Test';
+	src: url('./assets/fonts/DentonCondensedTest-ExtraBold.otf') format('opentype');
+	font-weight: 800;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Denton Text Cond Test';
+	src: url('./assets/fonts/DentonCondensedTest-Black.otf') format('opentype');
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Denton Condensed Test';
+	src: url('./assets/fonts/DentonCondensedTest-Regular.otf') format('opentype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Denton Condensed Test';
+	src: url('./assets/fonts/DentonCondensedTest-Bold.otf') format('opentype');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+/* ── Overrides y tokens semánticos de marca: Dos Volcanes Rupanco ── */
+:root {
+	--color-plum: #351e28;
+	--color-ecru: #e1ddd1;
+	--color-coral: #ff5c35;
+	--color-lime: #eaf070;
+	--color-lime-hover: #dce263;
+
+	/* Superficies semánticas */
+	--color-bg-deep: var(--color-plum);
+	--color-bg-base: var(--color-plum);
+	--color-surface-base: var(--color-ecru);
+	--color-surface-dark: var(--color-plum);
+	--color-surface-muted: rgba(225, 221, 209, 0.08);
+
+	/* Textos */
+	--color-text-heading: var(--color-ecru);
+	--color-text-secondary: var(--color-ecru);
+	--color-border-card: rgba(225, 221, 209, 0.15);
+	--color-border-outline: rgba(234, 240, 112, 0.4);
+
+	/* Botones & Acentos */
+	--color-primary: #eaf070;
+	--color-primary-hover: #dce263;
+	--color-primary-foreground: #351e28;
+
+	/* Tipografía */
+	--font-headline: 'Denton Text Cond Test', 'Denton Condensed Test', serif;
+	--font-body: Albert Sans, system-ui, -apple-system, sans-serif;
+
+	/* Radios */
+	--radius-lg: 20px;
+	--radius-md: 20px;
+	--radius-full: 9999px;
+
+	/* Efectos semánticos */
+	--glow-primary: 0 0 20px rgba(234, 240, 112, 0.35);
+	--shadow-card: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+
