@@ -9,6 +9,7 @@
 	import iconIg from './assets/imgGroup1333.svg';
 	import iconWsp from './assets/imgGroup2.svg';
 	import IconCheck from '~icons/mynaui/check';
+	import IconDanger from '~icons/mynaui/danger-circle';
 
 	let fullName = $state('');
 	let rut = $state('');
@@ -16,23 +17,55 @@
 	let email = $state('');
 	let isSubmitting = $state(false);
 	let isSuccess = $state(false);
+	let errorMessage = $state<string | null>(null);
 
-	function handleSubmit(e: SubmitEvent) {
+	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 		if (!fullName || !phone || !email) return;
 
 		isSubmitting = true;
-		setTimeout(() => {
-			isSubmitting = false;
-			isSuccess = true;
-			setTimeout(() => {
+		errorMessage = null;
+
+		try {
+			const res = await fetch('https://formsubmit.co/ajax/N.almarza@proyectocosmos.com', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept': 'application/json'
+				},
+				body: JSON.stringify({
+					'Nombre Completo': fullName,
+					'RUT': rut || 'No indicado',
+					'Teléfono': phone,
+					'Correo': email,
+					_subject: `Nuevo Lead Dos Volcanes Rupanco: ${fullName}`,
+					_template: 'table',
+					_captcha: 'false',
+					_replyto: email
+				})
+			});
+
+			const data = await res.json();
+
+			if (res.ok && (data.success === 'true' || data.success === true || (data.message && data.message.includes('Activation')))) {
+				isSuccess = true;
 				fullName = '';
 				rut = '';
 				phone = '';
 				email = '';
-				isSuccess = false;
-			}, 4000);
-		}, 800);
+			} else {
+				errorMessage = data.message || 'No fue posible enviar la información. Por favor, intenta de nuevo.';
+			}
+		} catch (err) {
+			console.error('Error al enviar formulario:', err);
+			errorMessage = 'Error de conexión al enviar el formulario. Por favor, intenta de nuevo.';
+		} finally {
+			isSubmitting = false;
+		}
+	}
+
+	function resetSuccess() {
+		isSuccess = false;
 	}
 </script>
 
@@ -51,27 +84,37 @@
 
 			<div class="contact-form-col">
 				<h2 class="form-title">
-					DÉJANOS TUS DATOS Y UN ASESOR ESPECIALIZADO DE CONTACTARÁ.
+					DÉJANOS TUS DATOS Y UN ASESOR ESPECIALIZADO TE CONTACTARÁ.
 				</h2>
 
 				{#if isSuccess}
 					<div class="success-banner">
-						<IconCheck style="font-size: 24px;" />
-						<div>
+						<IconCheck style="font-size: 26px; flex-shrink: 0;" />
+						<div class="banner-text">
 							<strong>¡Solicitud enviada con éxito!</strong>
-							<p>Un asesor del proyecto Dos Volcanes te contactará a la brevedad.</p>
+							<p>Tus datos han sido enviados correctamente. Un asesor del proyecto te contactará a la brevedad.</p>
 						</div>
+						<button type="button" class="banner-reset-btn" onclick={resetSuccess}>Enviar otra consulta</button>
 					</div>
 				{:else}
 					<form class="lead-form" onsubmit={handleSubmit}>
+						{#if errorMessage}
+							<div class="error-banner">
+								<IconDanger style="font-size: 20px; flex-shrink: 0;" />
+								<span>{errorMessage}</span>
+							</div>
+						{/if}
+
 						<div class="form-group full-width">
 							<input
 								type="text"
+								name="Nombre Completo"
 								bind:value={fullName}
 								placeholder="NOMBRE COMPLETO"
 								required
 								class="input-pill"
 								aria-label="Nombre completo"
+								disabled={isSubmitting}
 							/>
 						</div>
 
@@ -79,20 +122,24 @@
 							<div class="form-group half-width">
 								<input
 									type="text"
+									name="RUT"
 									bind:value={rut}
 									placeholder="RUT"
 									class="input-pill"
 									aria-label="RUT"
+									disabled={isSubmitting}
 								/>
 							</div>
 							<div class="form-group half-width">
 								<input
 									type="tel"
+									name="Teléfono"
 									bind:value={phone}
 									placeholder="TELÉFONO"
 									required
 									class="input-pill"
 									aria-label="Teléfono"
+									disabled={isSubmitting}
 								/>
 							</div>
 						</div>
@@ -100,11 +147,13 @@
 						<div class="form-group full-width">
 							<input
 								type="email"
+								name="Correo"
 								bind:value={email}
 								placeholder="MAIL"
 								required
 								class="input-pill"
 								aria-label="Correo electrónico"
+								disabled={isSubmitting}
 							/>
 						</div>
 
@@ -324,6 +373,19 @@
 		color: rgba(225, 221, 209, 0.75);
 	}
 
+	.error-banner {
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+		background: rgba(255, 92, 53, 0.15);
+		border: 1px solid var(--color-coral);
+		color: #ff9b80;
+		padding: var(--space-3) var(--space-5);
+		border-radius: var(--radius-md);
+		font-size: var(--text-xs);
+		animation: fadeIn var(--dur-fast) ease-out;
+	}
+
 	.success-banner {
 		display: flex;
 		align-items: center;
@@ -331,14 +393,56 @@
 		background: rgba(234, 240, 112, 0.15);
 		border: 1px solid var(--color-lime);
 		color: var(--color-lime);
-		padding: var(--space-4) var(--space-6);
+		padding: var(--space-5) var(--space-6);
 		border-radius: var(--radius-md);
+		animation: fadeIn var(--dur-fast) ease-out;
+		flex-wrap: wrap;
 	}
 
-	.success-banner p {
+	.banner-text {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		flex: 1;
+		min-width: 200px;
+	}
+
+	.banner-text strong {
+		color: var(--color-lime);
+		font-size: var(--text-base);
+	}
+
+	.banner-text p {
 		margin: 0;
-		font-size: var(--text-sm);
+		font-size: var(--text-xs);
 		color: var(--color-ecru);
+		opacity: 0.9;
+		line-height: 1.4;
+	}
+
+	.banner-reset-btn {
+		background: transparent;
+		border: 1px solid var(--color-lime);
+		color: var(--color-lime);
+		padding: 6px 14px;
+		border-radius: var(--radius-full);
+		font-family: var(--font-body);
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		cursor: pointer;
+		transition: all var(--dur-fast) var(--ease-in-out);
+	}
+
+	.banner-reset-btn:hover {
+		background: var(--color-lime);
+		color: var(--color-plum);
+	}
+
+	@keyframes fadeIn {
+		from { opacity: 0; transform: translateY(-4px); }
+		to { opacity: 1; transform: translateY(0); }
 	}
 
 	.divider-wrapper {

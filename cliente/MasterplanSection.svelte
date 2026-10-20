@@ -1,28 +1,11 @@
 <script lang="ts">
-	import imgTerreno from './assets/imgTerrenoCenital51.png';
-	import imgLago from './assets/img1VolcanesLagoRupanco20211.png';
 	import badgeRegion from './assets/imgGroup.svg';
 	import badgeOsorno from './assets/imgGroup1.svg';
 	import Icon360 from '~icons/mynaui/box';
-	import IconCompass from '~icons/mynaui/compass';
 	import IconSparkles from '~icons/mynaui/sparkles';
+	import IconExternal from '~icons/mynaui/external-link';
 
-
-	let activeView = $state<'aerial' | 'lake'>('aerial');
-	let selectedLot = $state<number | null>(7);
-	let isInteractive = $state(false);
-
-	const lots = [
-		{ id: 4, name: 'Lote 04 - Mirador Volcán', area: '5.200 m²', status: 'Disponible', top: '34%', left: '28%' },
-		{ id: 7, name: 'Lote 07 - Primera Línea Bosque', area: '5.050 m²', status: 'Reservado', top: '48%', left: '46%' },
-		{ id: 12, name: 'Lote 12 - Orilla Río Pulleufú', area: '5.400 m²', status: 'Disponible', top: '62%', left: '68%' },
-		{ id: 19, name: 'Lote 19 - Playa Lago Rupanco', area: '6.100 m²', status: 'Disponible', top: '72%', left: '32%' },
-		{ id: 24, name: 'Lote 24 - Pradera Alta', area: '5.000 m²', status: 'Disponible', top: '38%', left: '74%' }
-	];
-
-	function selectLot(id: number) {
-		selectedLot = id;
-	}
+	let isTourLoaded = $state(false);
 </script>
 
 <section class="masterplan-section" id="masterplan">
@@ -34,86 +17,55 @@
 			</div>
 			<h2 class="section-title">MASTERPLAN 360º</h2>
 			<p class="section-subtitle">
-				Explora el loteo de manera inmersiva. Navega por el terreno, revisa
+				Explora el loteo de manera inmersiva. Navega en 360º por el terreno, revisa
 				las vistas y encuentra la parcela ideal para tu futuro refugio.
 			</p>
 		</header>
 
 		<div class="viewer-wrapper">
 			<div class="viewer-toolbar">
-				<div class="tab-group">
-					<button
-						type="button"
-						class="tab-btn"
-						class:active={activeView === 'aerial'}
-						onclick={() => (activeView = 'aerial')}
-					>
-						<IconCompass style="font-size: 16px;" />
-						<span>Vista Aérea Cenital</span>
-					</button>
-					<button
-						type="button"
-						class="tab-btn"
-						class:active={activeView === 'lake'}
-						onclick={() => (activeView = 'lake')}
-					>
-						<Icon360 style="font-size: 16px;" />
-						<span>Vista 360º Lago</span>
-					</button>
+				<div class="tour-status-badge">
+					<Icon360 style="font-size: 16px;" />
+					<span>Tour Virtual 360º</span>
+					<span class="live-dot" aria-label="En vivo"></span>
 				</div>
 
 				<div class="viewer-actions">
-					<span class="hint-badge">
+					<span class="hint-badge desktop-only">
 						<IconSparkles style="font-size: 14px;" />
-						Haz clic en los puntos para ver parcelas
+						Arrastra para rotar en 360º
 					</span>
+					<a
+						href="https://www.lanube360.com/dosvolcanes/"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="open-link"
+						title="Abrir Tour 360 en pantalla completa"
+					>
+						<span>Pantalla Completa</span>
+						<IconExternal style="font-size: 14px;" />
+					</a>
 				</div>
 			</div>
 
-			<div class="canvas-container">
-				<img
-					src={activeView === 'aerial' ? imgTerreno : imgLago}
-					alt="Masterplan 360 interactivo del loteo Rupanco"
-					class="canvas-bg"
-				/>
-				<div class="canvas-overlay"></div>
-
-				{#each lots as lot}
-					<button
-						type="button"
-						class="hotspot-pin"
-						class:active={selectedLot === lot.id}
-						style={`top: ${lot.top}; left: ${lot.left};`}
-						onclick={() => selectLot(lot.id)}
-						aria-label={`Ver detalles de ${lot.name}`}
-					>
-						<span class="pin-ring"></span>
-						<span class="pin-core">{lot.id}</span>
-					</button>
-				{/each}
-
-				{#if selectedLot !== null}
-					{@const current = lots.find((l) => l.id === selectedLot)}
-					{#if current}
-						<div class="lot-info-card" style={`top: calc(${current.top} - 110px); left: ${current.left};`}>
-							<div class="lot-header">
-								<span class="lot-name">{current.name}</span>
-								<span class="lot-status" class:reserved={current.status === 'Reservado'}>
-									{current.status}
-								</span>
-							</div>
-							<div class="lot-details">
-								<span>Superficie: <strong>{current.area}</strong></span>
-								<span>Rol Propio • Luz & Agua</span>
-							</div>
-							<a href="#contacto" class="lot-cta">Consultar este lote</a>
-						</div>
-					{/if}
+			<!-- Tour 360 View (LaNube360) -->
+			<div class="tour-frame-container">
+				{#if !isTourLoaded}
+					<div class="frame-loader" aria-live="polite">
+						<div class="loader-spinner"></div>
+						<p class="loader-label">Cargando Tour Virtual 360º...</p>
+					</div>
 				{/if}
-
-				<div class="compass-indicator" aria-hidden="true">
-					<span class="needle">N</span>
-				</div>
+				<iframe
+					src="https://www.lanube360.com/dosvolcanes/"
+					title="Tour Virtual 360º Dos Volcanes Rupanco"
+					class="tour-iframe"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; xr-spatial-tracking; fullscreen"
+					allowfullscreen
+					loading="lazy"
+					referrerpolicy="no-referrer-when-downgrade"
+					onload={() => (isTourLoaded = true)}
+				></iframe>
 			</div>
 		</div>
 	</div>
@@ -191,6 +143,7 @@
 		box-shadow: 0 20px 50px rgba(53, 30, 40, 0.25);
 		display: flex;
 		flex-direction: column;
+		border: 1px solid rgba(53, 30, 40, 0.15);
 	}
 
 	.viewer-toolbar {
@@ -202,12 +155,7 @@
 		border-bottom: 1px solid rgba(225, 221, 209, 0.15);
 	}
 
-	.tab-group {
-		display: flex;
-		gap: var(--space-2);
-	}
-
-	.tab-btn {
+	.tour-status-badge {
 		display: inline-flex;
 		align-items: center;
 		gap: var(--space-2);
@@ -215,19 +163,30 @@
 		border-radius: var(--radius-full);
 		font-family: var(--font-body);
 		font-size: var(--text-xs);
-		font-weight: 600;
-		border: 1px solid rgba(225, 221, 209, 0.2);
-		background: transparent;
-		color: var(--color-ecru);
-		cursor: pointer;
-		transition: all var(--dur-fast) var(--ease-in-out);
-	}
-
-	.tab-btn.active,
-	.tab-btn:hover {
+		font-weight: 700;
 		background: var(--color-lime);
 		color: var(--color-plum);
-		border-color: var(--color-lime);
+		letter-spacing: 0.04em;
+	}
+
+	.live-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: var(--radius-full);
+		background: var(--color-plum);
+		box-shadow: 0 0 6px var(--color-plum);
+		animation: pulseDot 1.6s infinite;
+	}
+
+	@keyframes pulseDot {
+		0%, 100% {
+			opacity: 1;
+			transform: scale(1);
+		}
+		50% {
+			opacity: 0.35;
+			transform: scale(0.75);
+		}
 	}
 
 	.hint-badge {
@@ -239,190 +198,92 @@
 		font-weight: 500;
 	}
 
-	.canvas-container {
-		position: relative;
-		width: 100%;
-		height: 520px;
-		overflow: hidden;
-		background: #8e9e85;
+	.viewer-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--space-4);
 	}
 
-	.canvas-bg {
+	.open-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: var(--space-2) var(--space-4);
+		border-radius: var(--radius-full);
+		font-family: var(--font-body);
+		font-size: var(--text-xs);
+		font-weight: 600;
+		background: rgba(234, 240, 112, 0.15);
+		color: var(--color-lime);
+		border: 1px solid rgba(234, 240, 112, 0.35);
+		text-decoration: none;
+		transition: all var(--dur-fast) var(--ease-in-out);
+	}
+
+	.open-link:hover {
+		background: var(--color-lime);
+		color: var(--color-plum);
+		border-color: var(--color-lime);
+	}
+
+	.tour-frame-container {
+		position: relative;
+		width: 100%;
+		height: clamp(520px, 68vh, 720px);
+		background: #1e1117;
+		overflow: hidden;
+	}
+
+	.tour-iframe {
 		width: 100%;
 		height: 100%;
-		object-fit: cover;
-		object-position: center;
-		filter: saturate(0.95);
+		border: 0;
+		display: block;
 	}
 
-	.canvas-overlay {
+	.frame-loader {
 		position: absolute;
 		inset: 0;
-		background: radial-gradient(circle at center, transparent 40%, rgba(53, 30, 40, 0.4) 100%);
-		pointer-events: none;
-	}
-
-	.hotspot-pin {
-		position: absolute;
-		transform: translate(-50%, -50%);
-		width: 34px;
-		height: 34px;
-		border-radius: var(--radius-full);
-		background: transparent;
-		border: none;
-		cursor: pointer;
 		display: flex;
+		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		z-index: 5;
-		padding: 0;
-	}
-
-	.pin-ring {
-		position: absolute;
-		inset: 0;
-		border-radius: var(--radius-full);
-		background: rgba(234, 240, 112, 0.35);
-		animation: pulseRing 2s infinite ease-out;
-	}
-
-	.pin-core {
-		position: relative;
-		z-index: 2;
-		width: 26px;
-		height: 26px;
-		border-radius: var(--radius-full);
-		background: var(--color-lime);
-		color: var(--color-plum);
-		font-size: 11px;
-		font-weight: 800;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-		transition: transform var(--dur-fast) var(--ease-in-out);
-	}
-
-	.hotspot-pin:hover .pin-core,
-	.hotspot-pin.active .pin-core {
-		transform: scale(1.2);
-		background: var(--color-ecru);
-		color: var(--color-plum);
-	}
-
-	@keyframes pulseRing {
-		0% {
-			transform: scale(0.8);
-			opacity: 0.8;
-		}
-		100% {
-			transform: scale(1.6);
-			opacity: 0;
-		}
-	}
-
-	.lot-info-card {
-		position: absolute;
-		transform: translate(-50%, 0);
-		z-index: 10;
-		background: rgba(53, 30, 40, 0.96);
-		backdrop-filter: blur(12px);
-		border: 1px solid var(--color-border-card);
-		border-radius: var(--radius-md);
-		padding: var(--space-4) var(--space-5);
+		gap: var(--space-3);
+		background: #25151e;
 		color: var(--color-ecru);
-		min-width: 230px;
-		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-2);
-		animation: popIn var(--dur-fast) var(--ease-out-expo);
+		z-index: 2;
 	}
 
-	@keyframes popIn {
-		from {
-			opacity: 0;
-			transform: translate(-50%, 10px);
-		}
-		to {
-			opacity: 1;
-			transform: translate(-50%, 0);
-		}
+	.loader-spinner {
+		width: 38px;
+		height: 38px;
+		border-radius: 50%;
+		border: 3px solid rgba(234, 240, 112, 0.2);
+		border-top-color: var(--color-lime);
+		animation: spinLoader 0.9s linear infinite;
 	}
 
-	.lot-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: var(--space-2);
-	}
-
-	.lot-name {
-		font-weight: 700;
-		font-size: var(--text-sm);
-		color: var(--color-lime);
-	}
-
-	.lot-status {
-		font-size: 10px;
-		padding: 2px 6px;
-		border-radius: var(--radius-full);
-		background: rgba(234, 240, 112, 0.2);
-		color: var(--color-lime);
-		font-weight: 700;
-		text-transform: uppercase;
-	}
-
-	.lot-status.reserved {
-		background: rgba(255, 92, 53, 0.2);
-		color: var(--color-coral);
-	}
-
-	.lot-details {
-		display: flex;
-		flex-direction: column;
+	.loader-label {
 		font-size: var(--text-xs);
+		color: var(--color-ecru);
 		opacity: 0.85;
-		line-height: 1.4;
+		margin: 0;
+		font-family: var(--font-body);
+		letter-spacing: 0.05em;
 	}
 
-	.lot-cta {
-		margin-top: var(--space-2);
-		padding: var(--space-2) var(--space-3);
-		border-radius: var(--radius-full);
-		background: var(--color-lime);
-		color: var(--color-plum);
-		font-size: var(--text-xs);
-		font-weight: 700;
-		text-align: center;
-		text-decoration: none;
-		transition: opacity var(--dur-fast) var(--ease-in-out);
-	}
-
-	.lot-cta:hover {
-		opacity: 0.9;
-	}
-
-	.compass-indicator {
-		position: absolute;
-		bottom: var(--space-4);
-		right: var(--space-4);
-		width: 44px;
-		height: 44px;
-		border-radius: var(--radius-full);
-		background: rgba(53, 30, 40, 0.85);
-		border: 1px solid var(--color-border-card);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: var(--color-lime);
-		font-weight: 800;
-		font-size: var(--text-sm);
+	@keyframes spinLoader {
+		to {
+			transform: rotate(360deg);
+		}
 	}
 
 	@media (max-width: 768px) {
-		.canvas-container {
-			height: 380px;
+		.tour-frame-container {
+			height: 440px;
+		}
+		.desktop-only {
+			display: none;
 		}
 		.viewer-toolbar {
 			flex-direction: column;
@@ -430,7 +291,7 @@
 			align-items: center;
 			text-align: center;
 		}
-		.tab-group {
+		.viewer-actions {
 			justify-content: center;
 			flex-wrap: wrap;
 		}

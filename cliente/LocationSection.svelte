@@ -4,9 +4,8 @@
 	import iconCar from './assets/imgCapa5.svg';
 	import iconBoat from './assets/imgCapa4.svg';
 	import iconCircle from './assets/imgGroup1348.svg';
-	import imgMapSatellite from './assets/imgSunlitForestPathWithLushGreenMoss1.png';
-	import IconMapPin from '~icons/mynaui/map-pin';
-	import IconNavigation from '~icons/mynaui/navigation';
+	import IconMap from '~icons/mynaui/map';
+	import IconExternal from '~icons/mynaui/external-link';
 
 	interface LocationCard {
 		title: string;
@@ -14,6 +13,8 @@
 		icon: string;
 		alt: string;
 	}
+
+	let isMapLoaded = $state(false);
 
 	const cards: LocationCard[] = [
 		{
@@ -45,53 +46,52 @@
 			</div>
 			<h2 class="section-title">UN PARAÍSO AISLADO, PERO CONECTADO</h2>
 			<p class="section-subtitle">
-				Explora el loteo de manera inmersiva. Navega por el terreno, revisa las
-				vistas y encuentra la parcela ideal para tu futuro refugio.
+				Ubicación estratégica en la ribera sur del Lago Rupanco con accesibilidad directa por ruta asfaltada, conectando con aeropuertos, termas y centros turísticos de la X Región.
 			</p>
 		</header>
 
 		<!-- Interactive Map Showcase -->
 		<div class="map-showcase">
-			<div class="map-canvas">
-				<img src={imgMapSatellite} alt="Ubicación geográfica Lago Rupanco" class="map-bg" />
-				<div class="map-overlay"></div>
+			<div class="map-toolbar">
+				<div class="map-status-badge">
+					<IconMap style="font-size: 16px;" />
+					<span>Google Maps</span>
+				</div>
 
-				<!-- Visual Map Highlights -->
-				<div class="map-pin-point" style="top: 48%; left: 52%;">
-					<div class="pin-radar"></div>
-					<div class="pin-marker">
-						<IconMapPin style="font-size: 18px;" />
+				<div class="map-toolbar-actions">
+					<a
+						href="https://www.google.com/maps/search/?api=1&query=Lago+Rupanco"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="open-map-link"
+						title="Abrir ubicación en Google Maps"
+					>
+						<span>Ver en Google Maps</span>
+						<IconExternal style="font-size: 14px;" />
+					</a>
+				</div>
+			</div>
+
+			<!-- Google Maps Iframe Container -->
+			<div class="map-frame-container">
+				{#if !isMapLoaded}
+					<div class="map-loader" aria-live="polite">
+						<div class="loader-spinner"></div>
+						<p class="loader-label">Cargando Google Maps...</p>
 					</div>
-					<div class="pin-tooltip">
-						<strong>Dos Volcanes Rupanco</strong>
-						<span>Sector El Desagüe / Río Pulleufú</span>
-					</div>
-				</div>
-
-				<div class="map-poi" style="top: 25%; left: 24%;">
-					<span class="poi-dot"></span>
-					<span class="poi-label">Aeropuerto Osorno (55 min)</span>
-				</div>
-
-				<div class="map-poi" style="top: 36%; left: 40%;">
-					<span class="poi-dot"></span>
-					<span class="poi-label">Entrelagos (20 min)</span>
-				</div>
-
-				<div class="map-poi" style="top: 40%; left: 75%;">
-					<span class="poi-dot"></span>
-					<span class="poi-label">Termas Puyehue (30 min)</span>
-				</div>
-
-				<div class="map-poi" style="top: 68%; left: 78%;">
-					<span class="poi-dot"></span>
-					<span class="poi-label">Antillanca Ski (45 min)</span>
-				</div>
-
-				<div class="map-route-indicator">
-					<IconNavigation style="font-size: 14px;" />
-					<span>Ruta asfaltada hasta acceso principal</span>
-				</div>
+				{/if}
+				<iframe
+					src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d193204.55869340888!2d-72.5990743622675!3d-40.831890204386!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x96170ec3866f48df%3A0x2dfc212cb3d31e25!2sLago%20Rupanco!5e0!3m2!1ses!2scl!4v1792419191743!5m2!1ses!2scl"
+					width="100%"
+					height="100%"
+					style="border:0;"
+					allowfullscreen
+					loading="lazy"
+					referrerpolicy="strict-origin-when-cross-origin"
+					title="Ubicación Lago Rupanco en Google Maps"
+					class="google-map-iframe"
+					onload={() => (isMapLoaded = true)}
+				></iframe>
 			</div>
 		</div>
 
@@ -178,131 +178,109 @@
 	.map-showcase {
 		width: 100%;
 		border-radius: var(--radius-lg);
+		background: var(--color-plum);
 		overflow: hidden;
 		box-shadow: 0 20px 45px rgba(53, 30, 40, 0.25);
-		border: 2px solid rgba(53, 30, 40, 0.15);
-	}
-
-	.map-canvas {
-		position: relative;
-		width: 100%;
-		height: 440px;
-		background: #8e9e85;
-		overflow: hidden;
-	}
-
-	.map-bg {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		filter: saturate(0.85) contrast(1.05);
-	}
-
-	.map-overlay {
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(180deg, rgba(53, 30, 40, 0.3) 0%, rgba(255, 92, 53, 0.2) 100%);
-	}
-
-	.map-pin-point {
-		position: absolute;
-		transform: translate(-50%, -50%);
+		border: 1px solid rgba(53, 30, 40, 0.25);
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		z-index: 10;
 	}
 
-	.pin-radar {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		width: 50px;
-		height: 50px;
-		border-radius: var(--radius-full);
-		background: rgba(234, 240, 112, 0.35);
-		animation: radarPulse 2s infinite ease-out;
-	}
-
-	.pin-marker {
-		position: relative;
-		z-index: 2;
-		width: 36px;
-		height: 36px;
-		border-radius: var(--radius-full);
-		background: var(--color-lime);
-		color: var(--color-plum);
+	.map-toolbar {
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+		justify-content: space-between;
+		padding: var(--space-3) var(--space-6);
+		background: rgba(53, 30, 40, 0.96);
+		border-bottom: 1px solid rgba(225, 221, 209, 0.15);
 	}
 
-	.pin-tooltip {
-		margin-top: var(--space-2);
-		background: var(--color-plum);
-		color: var(--color-ecru);
-		padding: var(--space-2) var(--space-3);
-		border-radius: var(--radius-sm);
-		font-size: var(--text-xs);
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		white-space: nowrap;
-		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-	}
-
-	.pin-tooltip strong {
-		color: var(--color-lime);
-	}
-
-	@keyframes radarPulse {
-		0% {
-			transform: translate(-50%, -50%) scale(0.6);
-			opacity: 0.9;
-		}
-		100% {
-			transform: translate(-50%, -50%) scale(1.8);
-			opacity: 0;
-		}
-	}
-
-	.map-poi {
-		position: absolute;
-		display: flex;
-		align-items: center;
-		gap: var(--space-2);
-		background: rgba(53, 30, 40, 0.85);
-		backdrop-filter: blur(8px);
-		color: var(--color-ecru);
-		padding: 4px 10px;
-		border-radius: var(--radius-full);
-		font-size: 11px;
-		font-weight: 600;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-	}
-
-	.poi-dot {
-		width: 6px;
-		height: 6px;
-		border-radius: var(--radius-full);
-		background: var(--color-lime);
-	}
-
-	.map-route-indicator {
-		position: absolute;
-		bottom: var(--space-4);
-		left: var(--space-4);
+	.map-status-badge {
 		display: inline-flex;
 		align-items: center;
 		gap: var(--space-2);
-		background: rgba(53, 30, 40, 0.9);
-		color: var(--color-lime);
 		padding: var(--space-2) var(--space-4);
 		border-radius: var(--radius-full);
+		font-family: var(--font-body);
+		font-size: var(--text-xs);
+		font-weight: 700;
+		background: var(--color-lime);
+		color: var(--color-plum);
+		letter-spacing: 0.04em;
+	}
+
+	.open-map-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: var(--space-2) var(--space-4);
+		border-radius: var(--radius-full);
+		font-family: var(--font-body);
 		font-size: var(--text-xs);
 		font-weight: 600;
+		background: rgba(234, 240, 112, 0.15);
+		color: var(--color-lime);
+		border: 1px solid rgba(234, 240, 112, 0.35);
+		text-decoration: none;
+		transition: all var(--dur-fast) var(--ease-in-out);
+	}
+
+	.open-map-link:hover {
+		background: var(--color-lime);
+		color: var(--color-plum);
+		border-color: var(--color-lime);
+	}
+
+	.map-frame-container {
+		position: relative;
+		width: 100%;
+		height: clamp(440px, 55vh, 560px);
+		background: #25151e;
+		overflow: hidden;
+	}
+
+	.google-map-iframe {
+		width: 100%;
+		height: 100%;
+		border: 0;
+		display: block;
+	}
+
+	.map-loader {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-3);
+		background: #25151e;
+		color: var(--color-ecru);
+		z-index: 2;
+	}
+
+	.loader-spinner {
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		border: 3px solid rgba(234, 240, 112, 0.2);
+		border-top-color: var(--color-lime);
+		animation: spinMapLoader 0.9s linear infinite;
+	}
+
+	.loader-label {
+		font-size: var(--text-xs);
+		color: var(--color-ecru);
+		opacity: 0.85;
+		margin: 0;
+		font-family: var(--font-body);
+		letter-spacing: 0.05em;
+	}
+
+	@keyframes spinMapLoader {
+		to {
+			transform: rotate(360deg);
+		}
 	}
 
 	.cards-grid {
@@ -387,8 +365,17 @@
 		.cards-grid {
 			grid-template-columns: 1fr;
 		}
-		.map-canvas {
-			height: 340px;
+		.map-frame-container {
+			height: 380px;
+		}
+		.map-toolbar {
+			flex-direction: column;
+			gap: var(--space-3);
+			align-items: center;
+			text-align: center;
+		}
+		.map-toolbar-actions {
+			justify-content: center;
 		}
 	}
 </style>
